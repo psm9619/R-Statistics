@@ -3,7 +3,8 @@
 
 # ------------------------------------------------------------------
 # 그래프
-
+# ------------------------------------------------------------------
+#
 # 1. 산점도
 # 가장 먼저 그려서 전체적인 분산도를 알아보기 위한 기본 그래프
 library(ggplot2)
@@ -20,7 +21,14 @@ plot (jitter(cars$speed), jitter(cars$dist),
       main="속도와 제동거리", xlab="속도(mph)", ylab="제동거리(ft)",
       pch=1, col="red")
 
+ggplot(cars, aes(x=speed, y=dist)) +
+  geom_jitter(color="blue") +
+  labs(title = "속도와 제동거리", x= "속도(mph)", y="제동거리(ft)")
+
 par(mfrow=c(1,1))
+
+# ------------------------------------------------------------------
+#
 # 2. 시계열 그래프 Time Series
 Nile
 plot(Nile, 
@@ -46,7 +54,8 @@ ggplot(N, aes(x=연도, y=유량)) +
   theme_bw()
 time(Nile)
 
-
+# ------------------------------------------------------------------
+#
 # 3. 막대그래프와 히스토그램
 # 막대 : 높이에 초점 vs. 히스토 : 넓이에 초점
 load("pop.rda")
@@ -58,6 +67,12 @@ tableV5
 barplot(tableV5, main="출생아(남자)별 빈도", 
         xlab = "출생아수", ylab="빈도")
 
+df_V5 <- data.frame(tableV5)
+df_V5
+ggplot(df_V5, aes(x=Var1, y=Freq, fill=Var1))+
+  geom_bar(stat="identity") 
+
+
 # 히스토그램
 hist(pop$V2, main="연령별 분포", xlab = "연령", ylab="빈도")
 
@@ -65,7 +80,14 @@ hist(pop$V2, breaks=c(seq(0,90,10)), # 계급구간 customizing
      right=F,  # right-closed = F -> 각 구간은 [a,b) 로 오른쪽구간이 열림 (default 는 (a,b] 형태이다)     
      main="연령별 분포", xlab="연령", ylab="빈도")
 
+qplot(pop$V2, geom="histogram")
 
+ggplot(pop, aes(V2)) +
+  geom_histogram(binwidth = 5) +
+  sclae_fill_gradient ("count", low= "blue", high = "red")
+
+# ------------------------------------------------------------------
+#
 # 원 도표
 table(pop$V4)
 pie(table(pop$V4), main= "학력수준별 비중",
