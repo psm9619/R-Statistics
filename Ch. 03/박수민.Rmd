@@ -37,6 +37,15 @@ TRUE
 prob_pan <- dbinom (7, size = 10, prob = 0.80)
 prob_pan
 
+x <- 1:10
+dist_pan <- dbinom (x, 10, 0.8)
+dist_pan
+barplot(dist_pan, names=x, col="orange", border="yellow",
+        xlab="성공 횟수(x)", ylab="확률 (P(X=x))",
+        main = "80% 개별 성공률으로 패널티킥을 \n10 번 차서 7번 성공할 확률")
+
+text (7.9, prob_pan+0.01, paste("7번 성공률\n",0.2013*100, " %"), cex=1)
+
 # ------------- 산술적으로 직접 계산한 값
 options (digits=5)
 p <- 4/5 
@@ -52,6 +61,22 @@ prob_p2
 ```{r}
 p_faulse <- pbinom (2, size = 20, prob = 0.05)
 p_faulse
+
+a <- 0:20
+faulse <- dbinom (a, 20, 0.05)
+faulse
+cols <- c()
+for (i in 1:length(faulse)-1) {
+  if (i <= 2) 
+    cols <- c(cols, "red")
+  else 
+    cols <- c(cols, "orange")
+} ; cols
+barplot(faulse, names=a, 
+        col=cols, border="yellow",
+        xlab="불량", ylab="확률 (P(X=x))",
+        main = "5%의 불량률으로 20개의 스마트폰을 제작시, \n불량이 2개 이하일 경우")
+text (3.5, dbinom(2,20,0.05) + 0.03, paste("2개 이하 \n누적 확률\n",92, " %"), cex=0.6)
 
 # ------------- 산술적으로 직접 계산한 값
 fault <- 0.05
@@ -121,6 +146,67 @@ f_sumsix <- function (x) {
 f_sumsix (sum_die)
   
 ```
+
+
+
+#### A라는 전구회사에서 생산하는 전구의 수명은 800일이고 표준편차는 40일인 정규분포를 따른다고 한다.  이때 전구의 수명이 750일 이하일 확률을 구하시오.
+
+```{r}
+pnorm(750,800,40)
+
+mu <- 800 ; sig <- 40
+
+l <- seq(mu-3*sig, mu+3*sig, by =1)
+l.norm <- dnorm(l, mu, sig)
+l.norm
+plot(l, l.norm, axes=F, type="l", 
+     main = "평균이 800일 이고 표준편차가 40일인 표준정규분포", 
+     ylab = "P(X=x)", xlab="day")
+axis(1)
+lines(c(mu-3*sig, mu+3*sig), c(0,0))
+
+s <- seq(0, 700, by = 1)
+s.norm <- dnorm(s, mu, sig)
+s <- c(0, s, 700)
+s.norm <- c(0,s.norm,0)
+polygon(s,s.norm, density = 20, col="red")
+
+```
+
+#### 어느 한 회사에 다니는 종업원들의 근무기간을 조사하였더니, 평균은 11년이고 분산이 16년인 정규분포를 따른다고 한다.
+
+##### 1) 20년 이상 근무한 종업원의 비율을 구하시오.
+```{r}
+1-pnorm(19,11,4)
+
+```
+
+#####2) 근무연수가 가장 오래된 10%의 종업원은 이 회사에서 몇 년 이상 근무했다고 볼 수 있는가?
+```{r}
+qnorm(0.9, 11,4)
+```
+
+#### 어느 고등학교 3학년 학생들의 수학성적은 평균이 70이고 표준편차가 8인 정규분포를 따른다고 한다.  이때 점수가 80점 이상이고 90점 이하인 학생의 비율을 구하시오.
+```{r}
+pnorm(90, 70,8) - pnorm(80,70,8)
+```
+
+
+#### 확률변수 X가 평균이 1.5, 표준편차가 2인 정규분포를 따를 때, 실수 전체의 집합에서 정의된 함수 H(t)는 H(t) = P(t ≤ X ≤ t+1) 이다. H(0) + H(2)의 값을 구하시오.
+```{r}
+2*(pnorm(1, 1.5,2) - pnorm(0,1.5,2))
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,193 @@
+---
+---
+
+### Chi-squared distribution
+```{r}
+
+k <- 10
+n <- 500
+
+c1 <- rep(NA, n)
+c2 <- rep(NA, n)
+c3 <- rep(NA, n)
+c4 <- rep(NA, n)
+
+for (i in 1:n) {
+  c1[i] <- mean(rchisq(2, k))
+  c2[i] <- mean(rchisq(4, k))
+  c3[i] <- mean(rchisq(32, k))
+  c4[i] <- mean(rchisq(64, k))
+}
+options(digits=4)
+c(mean(c1), sd(c1))
+c(mean(c2), sd(c2))
+c(mean(c3), sd(c3))
+c(mean(c4), sd(c4))
+
+par(mfrow=c(2,2))
+
+hist(c1,  prob=TRUE, 
+     main = "표본크기: 2", xlab = "",
+     col = "orange", border = "brown")
+x1 <- seq(min(c1), max(c1), length=1000)
+y1 <- dnorm (x1, mean(c1), sd(c1))
+lines(x1, y1, lty=2, col="blue")
+
+hist(c2,  prob=TRUE,  
+     main = "표본크기: 4", xlab = "",
+     col = "orange", border = "brown")
+x2 <- seq(min(c2), max(c2), length=1000)
+y2 <- dnorm (x2, mean(c2), sd(c2))
+lines(x2, y2, lty=2, col="blue")
+
+hist(c3,  prob=TRUE,  
+     main = "표본크기: 32", xlab = "", 
+     col = "orange", border = "brown")
+x3 <- seq(min(c3), max(c3), length=1000)
+y3 <- dnorm (x3, mean(c3), sd(c3))
+lines(x3, y3, lty=2, col="blue")
+
+
+hist(c4,  prob=TRUE,  
+     main = "표본크기: 64", xlab = "", 
+     col = "orange", border = "brown")
+x4 <- seq(min(c4), max(c4), length=1000)
+y4 <- dnorm (x4, mean(c4), sd(c4))
+lines(x4, y4, lty=2, col="blue")
+
+mtext("Chi-squared Distribution", side = 3, line = -1, outer = TRUE)
+```
+
+
+
+
+### student's t-distribution
+
+```{r}
+
+k <- 10
+n <- 500
+
+f1 <- rep(NA, n)
+t2 <- rep(NA, n)
+t3 <- rep(NA, n)
+t4 <- rep(NA, n)
+
+for (i in 1:n) {
+  f1[i] <- mean(rt(2, k))
+  t2[i] <- mean(rt(4, k))
+  t3[i] <- mean(rt(32, k))
+  t4[i] <- mean(rt(64, k))
+}
+options(digits=4)
+c(mean(f1), sd(f1))
+c(mean(t2), sd(t2))
+c(mean(t3), sd(t3))
+c(mean(t4), sd(t4))
+
+par(mfrow=c(2,2))
+
+hist(f1,  prob=TRUE, 
+     main = "표본크기: 2", xlab = "",
+     col = "orange", border = "brown")
+x1 <- seq(min(f1), max(f1), length=1000)
+y1 <- dnorm (x1, mean(f1), sd(f1))
+lines(x1, y1, lty=2, col="blue")
+
+hist(t2,  prob=TRUE, 
+     main = "표본크기: 4", xlab = "",
+     col = "orange", border = "brown")
+x2 <- seq(min(t2), max(t2), length=1000)
+y2 <- dnorm (x2, mean(t2), sd(t2))
+lines(x2, y2, lty=2, col="blue")
+
+hist(t3,  prob=TRUE, 
+     main = "표본크기: 32", xlab = "",
+     col = "orange", border = "brown")
+x3 <- seq(min(t3), max(t3), length=1000)
+y3 <- dnorm (x3, mean(t3), sd(t3))
+lines(x3, y3, lty=2, col="blue")
+
+hist(t4,  prob=TRUE, 
+     main = "표본크기: 64", xlab = "",
+     col = "orange", border = "brown")
+x4 <- seq(min(t4), max(t4), length=1000)
+y4 <- dnorm (x4, mean(t4), sd(t4))
+lines(x4, y4, lty=2, col="blue")
+
+mtext("t-Distribution", side = 3, line = -1, outer = TRUE)
+
+```
+
+
+### F-distribution
+
+```{r}
+
+k1 <- 10
+k2 <- 3
+n <- 500
+
+f1 <- rep(NA, n)
+f2 <- rep(NA, n)
+f3 <- rep(NA, n)
+f4 <- rep(NA, n)
+
+for (i in 1:n) {
+  f1[i] <- mean(rt(2, k1, k2))
+  f2[i] <- mean(rt(4, k1, k2))
+  f3[i] <- mean(rt(32, k1, k2))
+  f4[i] <- mean(rt(64, k1, k2))
+}
+options(digits=4)
+c(mean(f1), sd(f1))
+c(mean(f2), sd(f2))
+c(mean(f3), sd(f3))
+c(mean(f4), sd(f4))
+
+par(mfrow=c(2,2))
+
+hist(f1,  prob=TRUE, 
+     main = "표본크기: 2", xlab = "",
+     col = "orange", border = "brown")
+x1 <- seq(min(f1), max(f1), length=1000)
+y1 <- dnorm (x1, mean(f1), sd(f1))
+lines(x1, y1, lty=2, col="blue")
+
+hist(f2,  prob=TRUE, 
+     main = "표본크기: 4", xlab = "",
+     col = "orange", border = "brown")
+x2 <- seq(min(f2), max(f2), length=1000)
+y2 <- dnorm (x2, mean(f2), sd(f2))
+lines(x2, y2, lty=2, col="blue")
+
+hist(f3,  prob=TRUE, 
+     main = "표본크기: 32", xlab = "",
+     col = "orange", border = "brown")
+x3 <- seq(min(f3), max(f3), length=1000)
+y3 <- dnorm (x3, mean(f3), sd(f3))
+lines(x3, y3, lty=2, col="blue")
+
+hist(f4,  prob=TRUE, 
+     main = "표본크기: 64", xlab = "",
+     col = "orange", border = "brown")
+x4 <- seq(min(f4), max(f4), length=1000)
+y4 <- dnorm (x4, mean(f4), sd(f4))
+lines(x4, y4, lty=2, col="blue")
+
+mtext("F-Distribution", side = 3, line = -1, outer = TRUE)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
