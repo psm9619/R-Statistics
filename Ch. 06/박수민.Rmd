@@ -1,0 +1,278 @@
+---
+title: '0625 practice'
+author: "Soomin Park"
+date: '2019 6 25 '
+output: html_document
+---
+
+#### 어느 대학교에서 대중교통을 이용하여 등교하는 학생의 비율을 알아보기 위하여 이 학교 학생 중 n 명을 임의 추출하여 조사한 결과 50%의 학생이 대중교통을 이용하여 등교하는 것으로 나타났다. 이 결과를 이용하여 이 대학교 전체 학생 중에서 대중교통을 이용하여 등교하는 학생의 비율 p에 대한 신뢰도 95%의 신뢰 구간을 구하시오
+<br>
+```{r}
+# size = n, p_hat = 0.5, p에 대한 95 % 신뢰구간 (alpha = 0.05) 
+p_h <- 0.5  ; alpha <- 0.05
+# Z = (p_hat-p_0)/sqrt(p_0 * (1-p_0)/n) 
+# P-value (CI) = 0.95
+# qnorm (0.025), qnorm (0.975) ->  -1.96 < Z < 1.96
+# n 은 미지수 상태, 모비율인 p_0 는 알 수 없으므로 p_0 = p_hat 으로 근사값을 대체 
+
+# 결과 식:  p_h + c.l * sqrt(p_h*(1-p_h)/n) < p_0 < p_h + c.u * sqrt(p_h*(1-p_h)/n) 
+# 임의로 n = 30 이라 주었을 떄
+n <- 30
+p_l <-  0.5 - 1.96 * sqrt(0.5*0.5/n)
+p_u <-  0.5 + 1.96 * sqrt(0.5*0.5/n)
+
+# 결론
+cat(paste(" 표본 크기 n = 30, 표본 비율 p_hat = 0.5 일 때, 모비율 p에 대한 신뢰도 95%의 구간은 \n",
+      round(p_l , 3),  "< p_0 <",round( p_u, 3) ,"이다"))
+
+# 그래프
+z <- seq(-3, 3, by=0.001)
+z.p <- dnorm(z)
+
+plot(z, z.p, axes=F, type="l", 
+     main="n=30, p_hat=0.5, 신뢰도 구간 95%", ylab="", ylim=c(-0.04, 0.4))
+lines(c(-3, 3), c(0, 0))
+
+points(-1.96, -0.02, pch=17, col="red")
+text(-1.96, -0.035, round(p_l, 3), col="red")
+points(1.96, -0.02, pch=17, col="red")
+text(1.96, -0.035, round(p_u, 3), col="red")
+
+s <- seq(-1.96, 1.96, by=0.001)
+s.z <- dnorm(s, mean=0, sd=1)
+s <- c(-1.96, s, 1.96)
+s.z <- c(0, s.z, 0)
+
+polygon(s, s.z, density=10, col="red")
+
+```
+
+#### 어느 음식점에서 새로운 메뉴를 개발하여 이 메뉴에 대한 선호도를 조사하기로 하였다. 고객 100명을 임의추출하여 이 메뉴에 대한 반응을 조사하였더니 이들 중 4/5가 선호한다고 하였다. 전체 고객의 새로운 메뉴에 대한 선호도를 p라 할 때, 모비율 p에 대한 신뢰도 95%의 신뢰구간을 구하시오.
+<br>
+```{r}
+n <- 100 ; p_hat <- 0.8 ; alpha <- 0.05
+c.l <- qnorm(0.025) ; c.u <- qnorm(0.975) 
+
+p_l <- p_hat + c.l * sqrt(0.8*0.2/100) ; p_u <- p_hat + c.u * sqrt(0.8*0.2/100)
+
+# 결론
+cat(paste(" 표본 크기 n = 100, 표본 비율 p_hat = 0.8 일 때, 모비율 p에 대한 신뢰도 95%의 구간은 \n",
+          round(p_l , 3),  "< p_0 <", round( p_u, 3) ,"이다"))
+
+# 그래프
+z <- seq(-3, 3, by=0.001)
+z.p <- dnorm(z)
+
+plot(z, z.p, axes=F, type="l", 
+     main="n= 100, p_hat= 0.8, 신뢰도 구간 95%", ylab="", ylim=c(-0.04, 0.4))
+lines(c(-3, 3), c(0, 0))
+
+points(-1.96, -0.02, pch=17, col="red")
+text(-1.96, -0.035, round(p_l, 3), col="red")
+points(1.96, -0.02, pch=17, col="red")
+text(1.96, -0.035, round(p_u, 3), col="red")
+
+s <- seq(-1.96, 1.96, by=0.001)
+s.z <- dnorm(s, mean=0, sd=1)
+s <- c(-1.96, s, 1.96)
+s.z <- c(0, s.z, 0)
+
+polygon(s, s.z, density=10, col="red")
+
+```
+
+#### 우리나라 성인 남성의 흡연율을 조사한다고 한다. 이에 성인 남자 1,000명을 무작위로 뽑아 흡연 여부를 조사하였더니, 430명이 흡연을 하고 있었다. 이때 흡연율(모비율)에 대한 90% 신뢰구간을 추정하시오.
+<br>
+```{r}
+n <- 1000  ;  p_h <- 430/1000 
+c.l <- qnorm(0.05) ; c.u <- qnorm(0.95) 
+p_l <- p_h + c.l * sqrt(p_h*(1-p_h)/n) ; p_u <- p_h + c.u * sqrt(p_h*(1-p_h)/n)
+
+# 결론
+cat(paste(" 표본 크기 n = 1000, 표본 비율 p_hat = 0.43 일 때, 모비율 p에 대한 신뢰도 95%의 구간은 \n",
+          round(p_l , 3),  "< p_0 <", round( p_u, 3) ,"이다"))
+
+# 그래프
+z <- seq(-3, 3, by=0.001)
+z.p <- dnorm(z)
+
+plot(z, z.p, axes=F, type="l", 
+     main="n= 1000, p_hat= 0.43, 신뢰도 구간 90%", ylab="", ylim=c(-0.04, 0.4))
+lines(c(-3, 3), c(0, 0))
+
+points(c.l, -0.02, pch=17, col="red")
+text(c.l, -0.035, round(p_l, 3), col="red")
+points(c.u, -0.02, pch=17, col="red")
+text(c.u, -0.035, round(p_u, 3), col="red")
+
+s <- seq(c.l, c.u, by=0.001)
+s.z <- dnorm(s, mean=0, sd=1)
+s <- c(c.l, s, c.u)
+s.z <- c(0, s.z, 0)
+
+polygon(s, s.z, density=10, col="red")
+
+```
+
+#### A회사의 건전지의 수명시간이 1000시간 일 때, 무작위로 뽑은 10개의 건전지에 대한 수명은 다음과 같다.	{980, 1008, 968, 1032, 1012, 996, 1021, 1002, 996, 1017} 샘플이 모집단과 같다고 할 수 있는가?
+
+```{r}
+sample <- c(980, 1008, 968, 1032, 1012, 996, 1021, 1002, 996, 1017)
+mu_0 <- 1000
+t <- t.test(sample, mu =mu_0) ; t
+
+# 결론
+cat(paste(" A 회사의 건전지 수명시간 평균이 1000시간이다는 가정이 참인지 알아보기 위해", "\n", 
+          "무작위로 뽑은 표본 집단 {980, 1008, 968, 1032, 1012, 996, 1021, 1002, 996, 1017}의 수명을 측정하였습니다.", "\n",
+          "표본의 평균은 ", round(mean(sample), 3), "(시간), 표준편차는 ", round(sd(sample),3),"(시간) 으로", "\n",
+          "표본과 모집단을 비교하여 one sample t-test 를 한 결과\n 검정통계량",
+          "t=", round(t$statistic, 3) , " (p-value: ", round(t$p.value, 3), ") 이며 95% 신뢰구간은 " , 
+          round(t$conf.int[1],3),  "< mu <", round(t$conf.int[2], 3) ,"입니다.", "\n",
+          "따라서, A 회사의 건전지 수명시간 평균이 1000시간이다 는 통계적으로 유의미한 결론으로 판단됩니다."))
+
+# 그래프
+par ( mar=c(0,1,1,1))
+x <- seq(-3,3,by = 0.0001)
+y <- dt (x, df=n-1)
+plot(x, y, type = "l", axes = F, ylim = c(-0.02, 0.38),
+     main = "", xlab = "t", ylab = "")
+abline (h=0)
+alpha <- 0.05
+c.l <- qt(alpha/2, df = length(sample)-1) ;  c.u <- qt(1-alpha/2, df = length(sample)-1) 
+polygon (c(-3,  x[x<c.l] , c.l), c(0,y[x<c.l], 0), col=2)
+polygon (c(c.u,  x[x>c.u] , 3), c(0,y[x>c.u], 0), col=2)
+# round( qt(0.025, df=9),3) ; round( qt(0.975, df=9),3)
+text (c.l, -0.02, expression(-t[0.025] == -2.262))
+text (c.u, -0.02, expression(t[0.025] == 2.262))
+text (c.l-0.05, 0.15, expression(P(T<t) <0.025), cex = 0.8)
+text (c.u+0.05, 0.15, expression(P(T>t) >0.025), cex = 0.8)
+arrows (c.l-0.05, 0.135, c.l, 0.04, length = 0.05)
+arrows (c.u+0.05, 0.135, c.u, 0.04, length = 0.05)
+
+t.t <- t$statistic
+polygon (c(t.t, x[x>t.t], 3), c(0,y[x>t.t], 0), density=15, angle =45)
+text (t.t, -0.02, paste("t=", round(t.t, 3), pos=4))
+text (t.t-0.8, 0.1, expression(plain(P) (T>0.527) == 0.611), cex = 0.8)
+arrows (t.t-0.8, 0.08, t.t-0.05 , 0.01, length = 0.05)
+```
+
+#### 어떤 반의 학생들의 수학 평균성적은 55점이었다. 0교시 수업을 시행하고 나서 학생들의 시험 성적은 다음과 같다. {58, 49, 39, 99, 32, 88, 62, 30, 55, 65, 44, 55, 57, 53, 88, 42, 39} 0교시 수업을 시행한 후, 학생들의 성적은 올랐다고 할 수 있는가?
+```{r}
+sample <- c(58, 49, 39, 99, 32, 88, 62, 30, 55, 65, 44, 55, 57, 53, 88, 42, 39) 
+mu_0 <- 55
+t <- t.test(sample, mu =mu_0, alternative = "greater") 
+
+# 결론
+cat(paste(" 0 교시 수업 시행 후 학생들의 수학 평균성적은 55점으로 변동하지 않는다 는 가정이 참인지 알아보기 위해", "\n", 
+          "표본 집단 {58, 49, 39, 99, 32, 88, 62, 30, 55, 65, 44, 55, 57, 53, 88, 42, 39}의 시험 성적을 분석하였습니다.", "\n",
+          "평균은", round(mean(sample), 3), "(점), 표준편차는", round(sd(sample),3),"(점) 으로, 표본과 모집단을 비교하여 one-sided & one-sample t-test 를 한 결과\n 검정통계량 ",
+          "t=", round(t$statistic, 3) , " (p-value : ", round(t$p.value, 3), ") 이며 ",
+          "95% 신뢰구간은" ,  round(t$conf.int[1],3),  "< mu <", round(t$conf.int[2], 3) ,"입니다.", "\n",
+          "따라서, 0 교시 수업 시행 후 학생들의 수학 평균성적은 55점에서 오르지 않는다 는 통계적으로 유의미한 결론으로 판단됩니다."))
+
+
+# 그래프
+par ( mar=c(0,1,1,1))
+x <- seq(-3,3,by = 0.0001)
+y <- dt (x, df=n-1)
+plot(x, y, type = "l", axes = F, ylim = c(-0.02, 0.38),
+     main = "", xlab = "t", ylab = "")
+abline (h=0)
+
+alpha <- 0.05 ; c.u <- qt(1-alpha, df = length(sample)-1) 
+polygon (c(c.u,  x[x>c.u] , 3), c(0,y[x>c.u], 0), col=2)
+text (c.u, -0.02, expression(t[0.05] == 1.74))
+text (1.8, 0.2, expression(alpha==0.05), cex = 0.8)
+arrows (1.8, 0.18, 1.8, 0.09, length = 0.05)
+
+t.t <- t$statistic 
+# t.t ; t$p.value
+polygon (c(t.t, x[x>t.t], 3), c(0,y[x>t.t], 0), density=10, angle =45)
+text (t.t, -0.02, paste("t=", round(t.t, 3), pos=4)) 
+text (t.t+1.7, 0.26, expression(plain(P) (T>0.245) == 0.405), cex = 0.8)
+arrows (t.t+1.1, 0.26, t.t+0.7, 0.26, length = 0.05)
+```
+
+#### 2006년 조사에 의하면 한국인의 1인 1일 평균 알코올 섭취량이 8.1g 이다. 2008년 무작위로 뽑은 알코올 섭취량은 다음과 같다. {15.50, 11.21, 12.67, 8.87, 12.15, 9.88, 2.06, 14.50, 0, 4.97} 평균 알코올 섭취량이 달라졌다고 할 수 있는가?
+```{r}
+sample <- c(15.50, 11.21, 12.67, 8.87, 12.15, 9.88, 2.06, 14.50, 0, 4.97)
+mu_0 <- 8.1
+t <- t.test(sample, mu =mu_0)
+
+cat(paste(" 2008 년 한국인의 1인 1일 알코올 섭취량 평균이 8.1g 이다 는 가정이 참인지 알아보기 위해", "\n", 
+          "무작위로 뽑은 표본 집단 {15.50, 11.21, 12.67, 8.87, 12.15, 9.88, 2.06, 14.50, 0, 4.97} 을 분석하였습니다.", "\n",
+          "평균은", round(mean(sample), 3), "(g), 표준편차는", round(sd(sample),3),"(g) 으로, 표본과 모집단을 비교하여 one sample t-test 를 한 결과\n 검정통계량 ",
+          "t=", round(t$statistic, 3) , " (p-value : ", round(t$p.value, 3), ") 이며 ",
+          "95% 신뢰구간은" ,  round(t$conf.int[1],3),  "< mu <", round(t$conf.int[2], 3) ,"입니다.", "\n",
+          "따라서, 2008 년 한국인의 1인 1일 알코올 섭취량 평균은 8.1g 이다 는 통계적으로 유의미한 결론으로 판단됩니다."))
+
+# 그래프
+par ( mar=c(0,1,1,1))
+x <- seq(-3,3,by = 0.0001)
+y <- dt (x, df=n-1)
+plot(x, y, type = "l", axes = F, ylim = c(-0.02, 0.38),
+     main = "", xlab = "t", ylab = "")
+abline (h=0)
+alpha <- 0.05
+c.l <- qt(alpha/2, df = length(sample)-1) ;  c.u <- qt(1-alpha/2, df = length(sample)-1) 
+polygon (c(-3,  x[x<c.l] , c.l), c(0,y[x<c.l], 0), col=2)
+polygon (c(c.u,  x[x>c.u] , 3), c(0,y[x>c.u], 0), col=2)
+# round( qt(0.025, df=9),3) ; round( qt(0.975, df=9),3)
+text (c.l, -0.02, expression(-t[0.025] == -2.262))
+text (c.u, -0.02, expression(t[0.025] == 2.262))
+text (c.l-0.05, 0.15, expression(P(T<t) <0.025), cex = 0.8)
+text (c.u+0.05, 0.15, expression(P(T>t) >0.025), cex = 0.8)
+arrows (c.l-0.05, 0.135, c.l, 0.04, length = 0.05)
+arrows (c.u+0.05, 0.135, c.u, 0.04, length = 0.05)
+
+t.t <- t$statistic 
+polygon (c(t.t, x[x>t.t], 3), c(0,y[x>t.t], 0), density=15, angle =45)
+text (t.t, -0.02, paste("t=", round(t.t, 3), pos=4))
+text (t.t-0.8, 0.1, expression(plain(P) (T>0.653) == 0.530), cex = 0.8)
+arrows (t.t-0.8, 0.08, t.t-0.05 , 0.01, length = 0.05)
+```
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
