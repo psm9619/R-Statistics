@@ -61,26 +61,17 @@ head(bos)
 
 chas 데이터는 찰스 강을 기준으로 한 dummy variable 이므로 factor 화 한다. 
 bos$chas <- as.factor(bos$chas)
+
 rad 데이터는 방사성 고속도로로의 접근성을 index 화 한 것.
 이는 접근성에 따라 ordered 되어있으므로 level 을 더한다.
 bos$rad <- as.factor(bos$rad)
 levels (bos$rad)
 
 대략적인 데이터의 분포와 추이를 보기 위해 histogram 과 boxplot 을 종속변수인 medv 에 대해 그린다.
-ggplot(bos, aes(medv)) +
-  geom_histogram(aes(y=  density , fill = count),
-                 colour = 'white', bins= 20) +
-  geom_density() +
-  scale_fill_gradient("Count", low="black",
-                      high= "turquoise4") + 
-  theme(panel.background = element_react(fill="gray98"), 
-        )
-
-
 hist (bos$medv, breaks= 20 ,
       col = 'yellow', border = 'purple')
 boxplot (bos$medv, col = 'yellow', border = 'brown')
-위의 그래프들에 따르면 medv 는 오른쪽으로 skewed 되어있는 형태의 분포이다.
+위의 그래프들에 따르면 medv 는 오른쪽으로 skewed 되어있는 형태의 분포이며 다수의 outlier 가 존재하는 것으로 보인다.
 
 종속변수를 포함하여 데이터 셋의 여러 변수를 포함한 산점도를 그린다.
 plot (bos, col = 'grey3')
@@ -94,8 +85,23 @@ indus 와 age, rad2,4,5,6, 등이 linear regression 에서 무의미한 영향�
 anova(fit) 
 nox 와 age 가 무의미한 영향력을 보인다.
 
+stepwise regression
+1. backward
+step(fit, direction = 'backward')
+age 와 indus 가 무의미한 변수로 파악되어 제거 되었다.
+
+2. forward
+step(lm(medv~1, data=bos), direction='forward',
+     scope = ~crim+zn+indus+chas+nox+rm+age+dis+rad+tax+ptratio+black+lstat)
+마찬가지로 age 와 indus 를 제외한 모든 변수가 유의미하다고 파악되었다.
+
+3. both direction
+step(fit, direction = 'both')
+쌍방으로 검사한 결과도 동일하므로 앞으로의 과정에는 age 와 indus 를 제외한 분석을 한다.
 
 
+install.packages("leaps")
+library(leaps)
 
 
 
