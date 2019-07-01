@@ -129,28 +129,58 @@ II. 기타 model
 독립성 (idependence)
 
 위의 step 과 leap regression 을 통해 판정한 변수들을 제외한 모델을 구축
-fit2 <- lm(medv~1, data=bos[, -c(1, 3, 7, 9, 10)])
+fit2 <- lm(medv~zn+chas+nox+rm+dis+ptratio+black+lstat,data=bos)
 이의 정규성, 등분산성, 선형성 및 독립성을 확인한다.
 par(mfrow=c(2,2)) ; plot (fit2)
 par(mfrow=c(1,1))
 1. 정규성
 shapiro.test(fit2$residuals)  # p-value = 0.000 < 0.05 로 정규성 거짓
 2. 등분산성 및 선형성
-gvlma 패키지의 gvlma 함수가 등분산성과 선형성을 검정한다.
-install.packages("glma")
+gvlma 패키지의 gvlma 함수가 등분산성과 선형성을 검정한다. 
+global test : 선형성, heteroscedasticity : 등분산성
+install.packages("gvlma")
+library(gvlma)
+(gvmodel <- gvlma(fit2))
+p-value 가 global, heteroscedatiscity 둘 다 < 0.05 이므로 선형성, 등분산성 모두 거짓.
+3. 독립성 
+Durbin-Watson 검정법으로 독립성을 검정한다.
+이 때는 DW statistic == 2 일 때 독립, ==0 일때 양의 자기상관, ==4 일때 음의 자기상관으로 판정한다.
+library(car)
+durbinWatsonTest(fit2)
+p-value = 0 <0.05 이므로 독립성이 거짓.
 
 
+결과적으로 fit2 는 다중선형회귀분석에 대한 기본가정을 만족하지 못한다.
+그러나 현 과제 특성상 이 모델로 우선 진행한다.
 
+overfitting 을 예방하기 위해 multicollinearity 를 검정하기 위해 
+vif 테스트를 시행한다. vif 값이 5보다 높을 경우 문제가 있는 것으로 판단한다.
+vif(fit2) 
+multicollinearity 문제는 없을 것으로 보인다.
 
+outlier 을 찾아내기 위해 outlierTesT() 를 시행한다.
+outlierTest(fit2, cutoff= Inf, n.max=8)
+bos2 <- bos[-c(369,372,373,370,413,365,371,366), -c(1,3,7, 9, 10)]
+fit3 <- lm(medv~., data = bos2)
+summary(fit3) # zn 은 무의미한 변수로 판정되고, chas 도 약한 연관성을 보이나 나머지 변수들은 매우 유의미하게 판정된다.
+par(mfrow=c(2,2))
+plot(fit3)  
 
+지난 fit, fit2 그래프보다 확연히 좋아진 linearity 가 확인된다. 그러나 여전히 non-linear 하다고 보인다. 
+따라서 polynomial 을 더해주는 것이 어떠한지 보도록 한다.
+지난 분석들 및 초반의 산점도를 볼 때 lstat 과 medv 사이의 polynomial 관계식이 의심된다.
 
+(fit4 <- lm(medv~. +I(lstat^2), data = bos2))
+summary(fit4)
+plot(fit4)
+새로운 outlier 들이 표시되고 여전히 linearity 는 문제가 있음이 보인다.
 
+(fit5 <- lm(medv~. +I(lstat^2) +I(lstat^3), data = bos2))
+summary(fit5)
+lstat^3 은 관계성이 무의미하다고 판정된다.
 
-
-
-
-
-
+따라서 fit4 model, 즉 crim, tax, age, indus, rad 를 제외하고 lstat^2 의 독립변수가 종속 변수 medv 와 유의미한 관계가 있는 여기에서 
+boston 의 집값 medv를 예측하기 위한 다중회귀식의 판정을 멈추도록 한다.
 
 
 
