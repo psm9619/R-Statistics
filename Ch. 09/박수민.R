@@ -78,7 +78,7 @@ plot (bos, col = 'grey3')
 패턴 상 한정된 값의 팩터인 chas 와 rad 는 산점도를 통해 correlation 을 보기 어려우므로 제외. 
 plot (bos[,-c(4, 9)], col = 'grey3')
 
-linear regression model
+I . linear regression model
 (fit <- lm(medv~. , data=bos))
 summary (fit)
 indus 와 age, rad2,4,5,6, 등이 linear regression 에서 무의미한 영향력을 가진 것으로 파악됨 (P(>t) > 0.05)
@@ -97,28 +97,47 @@ step(lm(medv~1, data=bos), direction='forward',
 
 3. both direction
 step(fit, direction = 'both')
-쌍방으로 검사한 결과도 동일하므로 앞으로의 과정에는 age 와 indus 를 제외한 분석을 한다.
+쌍방으로 검사한 결과도 동일하므로 앞으로의 과정에ㅅ는 age 와 indus 를 제외한 분석을 한다.
 
-
+4. leap
 install.packages("leaps")
 library(leaps)
+subset1 <- regsubsets(medv~., data = bos[, -c(3,7)],
+                     method = 'seqrep', nbest=11)
+plot(subset1)
+subset2 <- regsubsets(medv~., data = bos[, -c(3,7)],
+                     method = 'exhaustive', nbest=11)
+plot(subset2)
+subset2  # 확인 결과 rad 가 factor label 별로 하나씩 항목을 차지하고 있음이 보인다. 이를 막기 위해 rad 항목을 제외한다.
+
+subset1 <- regsubsets(medv~., data = bos[, -c(3,7,9)],
+                      method = 'seqrep', nbest=11)
+plot(subset1)
+subset2 <- regsubsets(medv~., data = bos[, -c(3,7,9)],
+                      method = 'exhaustive', nbest=11)
+plot(subset2)
+
+BIC 그래프 모형에 따르면 crim 과 tax 가 무의미하게 판정된다. 
+따라서 앞으로의 검정에서 crim, tax, age, indus, rad 를 제외시킨다.
 
 
+II. 기타 model
+다중선형회귀 모델 구축시 잔차에 대한 다음과 같은 가정을 한다.
+정규성 (normality)
+등분산성 (homoscedaticity)
+선형성 (linearity)
+독립성 (idependence)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+위의 step 과 leap regression 을 통해 판정한 변수들을 제외한 모델을 구축
+fit2 <- lm(medv~1, data=bos[, -c(1, 3, 7, 9, 10)])
+이의 정규성, 등분산성, 선형성 및 독립성을 확인한다.
+par(mfrow=c(2,2)) ; plot (fit2)
+par(mfrow=c(1,1))
+1. 정규성
+shapiro.test(fit2$residuals)  # p-value = 0.000 < 0.05 로 정규성 거짓
+2. 등분산성 및 선형성
+gvlma 패키지의 gvlma 함수가 등분산성과 선형성을 검정한다.
+install.packages("glma")
 
 
 
